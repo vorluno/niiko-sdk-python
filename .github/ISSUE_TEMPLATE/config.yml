@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Este cliente es GENERADO
+    url: https://github.com/vorluno/niiko
+    about: >-
+      Su código sale del manifiesto de acciones de niiko, así que un arreglo aquí se perdería en la siguiente
+      corrida. Cuenta el problema en el repositorio de arriba y se corrige en la fuente — que es donde el
+      arreglo llega también al otro cliente y a la referencia.
+  - name: Un fallo de la API, no del cliente
+    url: https://developers.niiko.org
+    about: Si el servidor contesta algo que la referencia no explica, empieza por ahí.
