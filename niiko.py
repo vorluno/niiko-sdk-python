@@ -1,10 +1,10 @@
-"""GENERADO desde el manifiesto de acciones de niiko — plan 9a8b80d285ff. No editar a mano.
+"""GENERATED from the niiko action manifest — plan 6c3240a7b22d. Do not edit by hand.
 
-Cada metodo de aqui existe porque una accion esta DECLARADA como publica. Si el servidor contesta
-"not_exposed", es que esta copia del SDK es mas nueva que el despliegue — no que te equivocaste de nombre.
+Every method here exists because an action is DECLARED public. If the server answers "not_exposed", this copy
+of the SDK is newer than the deployment — not that you got the name wrong.
 
-Sin dependencias: urllib viene con Python. Un SDK que arrastra un cliente HTTP obliga a quien lo instala a
-resolver un conflicto de versiones para mandar un POST.
+No dependencies: urllib ships with Python. An SDK that drags an HTTP client along forces whoever installs it
+to resolve a version conflict just to send a POST.
 """
 
 from __future__ import annotations
@@ -17,21 +17,21 @@ from typing import Any, Optional
 
 
 class NiikoError(Exception):
-    """El servidor contesto algo que no se puede leer. Una NEGATIVA no llega por aqui: es un estado."""
+    """The server answered something that cannot be read. A REFUSAL does not come through here: it is a state."""
 
-    def __init__(self, status: int, cuerpo: Any) -> None:
-        super().__init__(f"niiko: el servidor contesto {status}")
+    def __init__(self, status: int, body: Any) -> None:
+        super().__init__(f"niiko: the server answered {status}")
         self.status = status
-        self.cuerpo = cuerpo
+        self.body = body
 
 
 @dataclass
-class Resultado:
-    """Los tres desenlaces. Se ramifica una vez por status y ya sabes donde estas.
+class Result:
+    """The three outcomes. Branch once on status and you know where you are.
 
-    done              — hecho, con output.
-    pending_approval  — espera una firma humana; puede terminar horas despues (aviso por webhook).
-    refused           — no se hizo, y reason dice por que.
+    done              — done, with output.
+    pending_approval  — waits for a human signature; may complete hours later (webhook notification).
+    refused           — not done, and reason says why (detail may carry a message saying what to do).
     """
 
     status: str
@@ -61,7 +61,7 @@ class CreateLeadOutput:
     reason: Optional[str]
 
 
-# Los motivos que miira.lead_create declara. Uno fuera de esta lista es un fallo del servidor, no un estado.
+# The reasons miira.lead_create declares. One outside this list is a server fault, not a state.
 CREATELEAD_REASONS = ("honeypot", "invalid_email", "disposable_email", "invalid_identity",)
 
 
@@ -80,7 +80,7 @@ class LoggedCallOutput:
     followUpId: Optional[str]
 
 
-# Los motivos que crm.call_logged declara. Uno fuera de esta lista es un fallo del servidor, no un estado.
+# The reasons crm.call_logged declares. One outside this list is a server fault, not a state.
 LOGGEDCALL_REASONS = ("cliente_no_encontrado", "cliente_ambiguo", "demasiados_clientes", "sin_permiso",)
 
 
@@ -98,7 +98,7 @@ class AssignedOwnerOutput:
     ownerName: str
 
 
-# Los motivos que crm.owner_assigned declara. Uno fuera de esta lista es un fallo del servidor, no un estado.
+# The reasons crm.owner_assigned declares. One outside this list is a server fault, not a state.
 ASSIGNEDOWNER_REASONS = ("cliente_no_encontrado", "cliente_ambiguo", "demasiados_clientes", "persona_no_encontrada", "persona_ambigua", "sin_permiso",)
 
 
@@ -119,7 +119,7 @@ class MovedStageOutput:
     firstWon: bool
 
 
-# Los motivos que crm.stage_moved declara. Uno fuera de esta lista es un fallo del servidor, no un estado.
+# The reasons crm.stage_moved declares. One outside this list is a server fault, not a state.
 MOVEDSTAGE_REASONS = ("cliente_no_encontrado", "cliente_ambiguo", "demasiados_clientes", "sin_negocio_abierto", "varios_negocios", "etapa_no_encontrada", "negocio_cerrado", "ya_en_esa_etapa", "sin_permiso",)
 
 
@@ -145,7 +145,7 @@ class ProposedInvoiceOutput:
     issueAt: str
 
 
-# Los motivos que kiipu.invoice_proposed declara. Uno fuera de esta lista es un fallo del servidor, no un estado.
+# The reasons kiipu.invoice_proposed declares. One outside this list is a server fault, not a state.
 PROPOSEDINVOICE_REASONS = ("cliente_no_encontrado", "cliente_ambiguo", "demasiados_clientes", "sin_permiso",)
 
 
@@ -164,7 +164,7 @@ class CreatedTaskOutput:
     dueAt: str
 
 
-# Los motivos que crm.task_created declara. Uno fuera de esta lista es un fallo del servidor, no un estado.
+# The reasons crm.task_created declares. One outside this list is a server fault, not a state.
 CREATEDTASK_REASONS = ("cliente_no_encontrado", "cliente_ambiguo", "demasiados_clientes", "sin_permiso",)
 
 
@@ -189,7 +189,7 @@ class CreatedDealOutput:
     openDeals: int
 
 
-# Los motivos que crm.deal_created declara. Uno fuera de esta lista es un fallo del servidor, no un estado.
+# The reasons crm.deal_created declares. One outside this list is a server fault, not a state.
 CREATEDDEAL_REASONS = ("cliente_no_encontrado", "cliente_ambiguo", "demasiados_clientes", "etapa_no_encontrada", "etapa_cerrada", "persona_no_encontrada", "persona_ambigua", "sin_permiso",)
 
 
@@ -206,7 +206,7 @@ class AddedNoteOutput:
     noteId: str
 
 
-# Los motivos que crm.note_added declara. Uno fuera de esta lista es un fallo del servidor, no un estado.
+# The reasons crm.note_added declares. One outside this list is a server fault, not a state.
 ADDEDNOTE_REASONS = ("cliente_no_encontrado", "cliente_ambiguo", "demasiados_clientes", "sin_permiso",)
 
 
@@ -227,7 +227,7 @@ class AddedContactOutput:
     possibleDuplicate: bool
 
 
-# Los motivos que crm.contact_added declara. Uno fuera de esta lista es un fallo del servidor, no un estado.
+# The reasons crm.contact_added declares. One outside this list is a server fault, not a state.
 ADDEDCONTACT_REASONS = ("cliente_no_encontrado", "cliente_ambiguo", "demasiados_clientes", "sin_permiso",)
 
 
@@ -247,7 +247,7 @@ class QuotedBroadcastOutput:
     expiresAt: Optional[str]
 
 
-# Los motivos que miira.broadcast_quoted declara. Uno fuera de esta lista es un fallo del servidor, no un estado.
+# The reasons miira.broadcast_quoted declares. One outside this list is a server fault, not a state.
 QUOTEDBROADCAST_REASONS = ("plantilla_invalida", "tarifas_vencidas", "sin_permiso",)
 
 
@@ -262,7 +262,7 @@ class SentBroadcastOutput:
     costUsd: str
 
 
-# Los motivos que miira.broadcast_sent declara. Uno fuera de esta lista es un fallo del servidor, no un estado.
+# The reasons miira.broadcast_sent declares. One outside this list is a server fault, not a state.
 SENTBROADCAST_REASONS = ("presupuesto_invalido", "presupuesto_vencido", "presupuesto_cambiado", "plantilla_invalida", "tarifas_vencidas", "sin_permiso",)
 
 
@@ -281,7 +281,7 @@ class VoidedDraftOutput:
     status: str
 
 
-# Los motivos que kiipu.draft_voided declara. Uno fuera de esta lista es un fallo del servidor, no un estado.
+# The reasons kiipu.draft_voided declares. One outside this list is a server fault, not a state.
 VOIDEDDRAFT_REASONS = ("cliente_no_encontrado", "cliente_ambiguo", "demasiados_clientes", "borrador_no_encontrado", "varios_borradores", "no_es_borrador", "sin_permiso",)
 
 
@@ -305,192 +305,192 @@ class ReportedPaymentOutput:
     reviewAt: str
 
 
-# Los motivos que kiipu.payment_reported declara. Uno fuera de esta lista es un fallo del servidor, no un estado.
+# The reasons kiipu.payment_reported declares. One outside this list is a server fault, not a state.
 REPORTEDPAYMENT_REASONS = ("cliente_no_encontrado", "cliente_ambiguo", "demasiados_clientes", "sin_factura_abierta", "varias_facturas", "factura_no_encontrada", "sin_permiso",)
 
 
 class Niiko:
     def __init__(self, api_key: str, base_url: str = "https://niiko.org") -> None:
         if not api_key:
-            raise ValueError("niiko: falta api_key")
+            raise ValueError("niiko: api_key is required")
         self._api_key = api_key
         self._base_url = base_url.rstrip("/")
 
-    def _ejercer(self, accion: str, cuerpo: dict[str, Any], idempotency_key: Optional[str]) -> Resultado:
-        datos = json.dumps({k: v for k, v in cuerpo.items() if v is not None}).encode()
-        cabeceras = {"authorization": f"Bearer {self._api_key}", "content-type": "application/json"}
-        # Mandala SIEMPRE que puedas: un reintento por timeout con la misma clave no vuelve a ejecutar.
+    def _exercise(self, action: str, body: dict[str, Any], idempotency_key: Optional[str]) -> Result:
+        data = json.dumps({k: v for k, v in body.items() if v is not None}).encode()
+        headers = {"authorization": f"Bearer {self._api_key}", "content-type": "application/json"}
+        # Send it WHENEVER you can: a timeout retry with the same key does not execute again.
         if idempotency_key:
-            cabeceras["idempotency-key"] = idempotency_key
+            headers["idempotency-key"] = idempotency_key
 
         req = urllib.request.Request(
-            f"{self._base_url}/api/v1/actions/{accion}", data=datos, headers=cabeceras, method="POST"
+            f"{self._base_url}/api/v1/actions/{action}", data=data, headers=headers, method="POST"
         )
         try:
             with urllib.request.urlopen(req) as resp:
-                crudo = json.loads(resp.read().decode())
-                estado = resp.status
+                raw = json.loads(resp.read().decode())
+                status = resp.status
         except urllib.error.HTTPError as e:
-            # Una negativa llega con codigo 4xx y CUERPO: no es una excepcion del cliente, es un estado del
-            # producto. Se lee y se devuelve; lo que si revienta es lo que no se puede leer.
+            # A refusal arrives with a 4xx code and a BODY: it is not a client exception, it is a product
+            # state. It is read and returned; what does raise is what cannot be read.
             try:
-                crudo = json.loads(e.read().decode())
+                raw = json.loads(e.read().decode())
             except Exception:
                 raise NiikoError(e.code, None) from None
-            estado = e.code
+            status = e.code
 
-        if not isinstance(crudo, dict) or "status" not in crudo:
-            raise NiikoError(estado, crudo)
+        if not isinstance(raw, dict) or "status" not in raw:
+            raise NiikoError(status, raw)
 
-        return Resultado(
-            status=crudo["status"],
-            output=crudo.get("output"),
-            idempotency_key=crudo.get("idempotencyKey"),
-            proposal_id=crudo.get("proposalId"),
-            autonomy=crudo.get("autonomy"),
-            reason=crudo.get("reason"),
-            detail=crudo.get("detail"),
+        return Result(
+            status=raw["status"],
+            output=raw.get("output"),
+            idempotency_key=raw.get("idempotencyKey"),
+            proposal_id=raw.get("proposalId"),
+            autonomy=raw.get("autonomy"),
+            reason=raw.get("reason"),
+            detail=raw.get("detail"),
         )
 
     def create_lead(
-        self, entrada: CreateLeadInput, idempotency_key: Optional[str] = None
-    ) -> Resultado:
-        """Crea un lead nuevo en el CRM del workspace a partir de sus datos de contacto. Si ya existe uno que encaja, no lo duplica: contesta `ambiguous` con los candidatos.
+        self, input: CreateLeadInput, idempotency_key: Optional[str] = None
+    ) -> Result:
+        """Creates a new lead in the workspace CRM from its contact details. If a matching one already exists it is not duplicated: the reply is `ambiguous` with the candidates.
 
-        miira.lead_create v1 — alcance miira.lead_create@1.
+        miira.lead_create v1 — scope miira.lead_create@1.
 
-        Necesita DOS permisos: una clave con ese alcance, y que el workspace haya encendido la accion.
+        Needs TWO permissions: a key with that scope, and the workspace having switched the action on.
         """
-        return self._ejercer("miira.lead_create", asdict(entrada), idempotency_key)
+        return self._exercise("miira.lead_create", asdict(input), idempotency_key)
 
     def logged_call(
-        self, entrada: LoggedCallInput, idempotency_key: Optional[str] = None
-    ) -> Resultado:
-        """Anota en la ficha de un cliente, dicho por su nombre, lo que se habló en una llamada; opcionalmente deja creado el seguimiento con su fecha. No lee nada ni llama a nadie.
+        self, input: LoggedCallInput, idempotency_key: Optional[str] = None
+    ) -> Result:
+        """Logs what was discussed in a call on a client's record, naming the client; optionally creates the follow-up with its date. Reads nothing and calls no one.
 
-        crm.call_logged v1 — alcance crm.call_logged@1.
+        crm.call_logged v1 — scope crm.call_logged@1.
 
-        Necesita DOS permisos: una clave con ese alcance, y que el workspace haya encendido la accion.
+        Needs TWO permissions: a key with that scope, and the workspace having switched the action on.
         """
-        return self._ejercer("crm.call_logged", asdict(entrada), idempotency_key)
+        return self._exercise("crm.call_logged", asdict(input), idempotency_key)
 
     def assigned_owner(
-        self, entrada: AssignedOwnerInput, idempotency_key: Optional[str] = None
-    ) -> Resultado:
-        """Cambia de quién es un cliente, diciendo el nombre del cliente y el nombre (o correo) del miembro del equipo. Si alguno de los dos es ambiguo, se niega con la lista.
+        self, input: AssignedOwnerInput, idempotency_key: Optional[str] = None
+    ) -> Result:
+        """Changes who owns a client, naming the client and the team member (by name or email). If either is ambiguous it refuses with the list.
 
-        crm.owner_assigned v1 — alcance crm.owner_assigned@1.
+        crm.owner_assigned v1 — scope crm.owner_assigned@1.
 
-        Necesita DOS permisos: una clave con ese alcance, y que el workspace haya encendido la accion.
+        Needs TWO permissions: a key with that scope, and the workspace having switched the action on.
         """
-        return self._ejercer("crm.owner_assigned", asdict(entrada), idempotency_key)
+        return self._exercise("crm.owner_assigned", asdict(input), idempotency_key)
 
     def moved_stage(
-        self, entrada: MovedStageInput, idempotency_key: Optional[str] = None
-    ) -> Resultado:
-        """Mueve el negocio abierto de un cliente a otra etapa del pipeline, diciendo el nombre del cliente y el de la etapa. No crea negocios: sin uno abierto se niega, y con varios se niega con la lista.
+        self, input: MovedStageInput, idempotency_key: Optional[str] = None
+    ) -> Result:
+        """Moves a client's open deal to another pipeline stage, naming the client and the stage. Creates no deals: with no open deal it refuses, and with several it refuses with the list.
 
-        crm.stage_moved v1 — alcance crm.stage_moved@1.
+        crm.stage_moved v1 — scope crm.stage_moved@1.
 
-        Necesita DOS permisos: una clave con ese alcance, y que el workspace haya encendido la accion.
+        Needs TWO permissions: a key with that scope, and the workspace having switched the action on.
         """
-        return self._ejercer("crm.stage_moved", asdict(entrada), idempotency_key)
+        return self._exercise("crm.stage_moved", asdict(input), idempotency_key)
 
     def proposed_invoice(
-        self, entrada: ProposedInvoiceInput, idempotency_key: Optional[str] = None
-    ) -> Resultado:
-        """Deja preparada una factura como BORRADOR para un cliente dicho por su nombre, con sus líneas e impuestos. NO la emite, NO la numera y NO cuenta como deuda: una persona la revisa y la emite en Kiipu. No crea el cliente si no existe.
+        self, input: ProposedInvoiceInput, idempotency_key: Optional[str] = None
+    ) -> Result:
+        """Prepares an invoice as a DRAFT for a client named by name, with its lines and taxes. Does NOT issue it, does NOT number it and does NOT count as debt: a person reviews and issues it in Kiipu. Does not create the client if it does not exist.
 
-        kiipu.invoice_proposed v1 — alcance kiipu.invoice_proposed@1.
+        kiipu.invoice_proposed v1 — scope kiipu.invoice_proposed@1.
 
-        Necesita DOS permisos: una clave con ese alcance, y que el workspace haya encendido la accion.
+        Needs TWO permissions: a key with that scope, and the workspace having switched the action on.
         """
-        return self._ejercer("kiipu.invoice_proposed", asdict(entrada), idempotency_key)
+        return self._exercise("kiipu.invoice_proposed", asdict(input), idempotency_key)
 
     def created_task(
-        self, entrada: CreatedTaskInput, idempotency_key: Optional[str] = None
-    ) -> Resultado:
-        """Crea un recordatorio (tarea con fecha y hora) sobre un cliente dicho por su nombre. No anota una llamada: para eso está crm.call_logged. No crea el cliente si no existe.
+        self, input: CreatedTaskInput, idempotency_key: Optional[str] = None
+    ) -> Result:
+        """Creates a reminder (a task with date and time) on a client named by name. Does not log a call: that is crm.call_logged. Does not create the client if it does not exist.
 
-        crm.task_created v1 — alcance crm.task_created@1.
+        crm.task_created v1 — scope crm.task_created@1.
 
-        Necesita DOS permisos: una clave con ese alcance, y que el workspace haya encendido la accion.
+        Needs TWO permissions: a key with that scope, and the workspace having switched the action on.
         """
-        return self._ejercer("crm.task_created", asdict(entrada), idempotency_key)
+        return self._exercise("crm.task_created", asdict(input), idempotency_key)
 
     def created_deal(
-        self, entrada: CreatedDealInput, idempotency_key: Optional[str] = None
-    ) -> Resultado:
-        """Abre un negocio nuevo en el pipeline para un cliente dicho por su nombre, con título, valor opcional en USD, etapa opcional (por nombre; sin ella, la primera) y responsable opcional. No comprueba si ya tiene otros abiertos: devuelve cuántos quedan para que se vea un duplicado. No lo gana ni lo pierde: eso es crm.stage_moved.
+        self, input: CreatedDealInput, idempotency_key: Optional[str] = None
+    ) -> Result:
+        """Opens a new deal in the pipeline for a client named by name, with a title, an optional value in USD, an optional stage (by name; without it, the first one) and an optional owner. Does not check for other open deals: it returns how many remain so a duplicate is visible. Does not win or lose it: that is crm.stage_moved.
 
-        crm.deal_created v1 — alcance crm.deal_created@1.
+        crm.deal_created v1 — scope crm.deal_created@1.
 
-        Necesita DOS permisos: una clave con ese alcance, y que el workspace haya encendido la accion.
+        Needs TWO permissions: a key with that scope, and the workspace having switched the action on.
         """
-        return self._ejercer("crm.deal_created", asdict(entrada), idempotency_key)
+        return self._exercise("crm.deal_created", asdict(input), idempotency_key)
 
     def added_note(
-        self, entrada: AddedNoteInput, idempotency_key: Optional[str] = None
-    ) -> Resultado:
-        """Guarda una nota en la ficha de un cliente dicho por su nombre: algo que hay que saber la próxima vez, sin llamada ni fecha. Para una llamada está crm.call_logged; para un recordatorio con fecha, crm.task_created.
+        self, input: AddedNoteInput, idempotency_key: Optional[str] = None
+    ) -> Result:
+        """Saves a note on a client's record, naming the client: something to know next time, with no call and no date. For a call use crm.call_logged; for a dated reminder, crm.task_created.
 
-        crm.note_added v1 — alcance crm.note_added@1.
+        crm.note_added v1 — scope crm.note_added@1.
 
-        Necesita DOS permisos: una clave con ese alcance, y que el workspace haya encendido la accion.
+        Needs TWO permissions: a key with that scope, and the workspace having switched the action on.
         """
-        return self._ejercer("crm.note_added", asdict(entrada), idempotency_key)
+        return self._exercise("crm.note_added", asdict(input), idempotency_key)
 
     def added_contact(
-        self, entrada: AddedContactInput, idempotency_key: Optional[str] = None
-    ) -> Resultado:
-        """Añade una persona (nombre, y opcionalmente correo, teléfono y cargo) a la ficha de un cliente dicho por su nombre. No la hace contacto principal ni crea el cliente. Si ya había alguien con ese correo o teléfono, lo dice en la respuesta pero no lo impide.
+        self, input: AddedContactInput, idempotency_key: Optional[str] = None
+    ) -> Result:
+        """Adds a person (name, and optionally email, phone and role) to a client's record, naming the client. Does not make them the primary contact and does not create the client. If someone with that email or phone already existed, the reply says so but does not block it.
 
-        crm.contact_added v1 — alcance crm.contact_added@1.
+        crm.contact_added v1 — scope crm.contact_added@1.
 
-        Necesita DOS permisos: una clave con ese alcance, y que el workspace haya encendido la accion.
+        Needs TWO permissions: a key with that scope, and the workspace having switched the action on.
         """
-        return self._ejercer("crm.contact_added", asdict(entrada), idempotency_key)
+        return self._exercise("crm.contact_added", asdict(input), idempotency_key)
 
     def quoted_broadcast(
-        self, entrada: QuotedBroadcastInput, idempotency_key: Optional[str] = None
-    ) -> Resultado:
-        """Presupuesta mandar el MISMO mensaje de WhatsApp a varios clientes dichos por su nombre (hasta 50). NO envía nada: dice, por cliente, si le llega el texto tal cual (ventana de 24 h abierta, gratis), si hace falta una plantilla aprobada y cuánto cuesta, o por qué no se le puede escribir. Devuelve un presupuesto firmado que vale 15 minutos; para enviar, llama a miira.broadcast_sent con él. Enséñale el presupuesto a la persona antes.
+        self, input: QuotedBroadcastInput, idempotency_key: Optional[str] = None
+    ) -> Result:
+        """Quotes sending the SAME WhatsApp message to several clients named by name (up to 50). Sends NOTHING: per client, it says whether the text goes as-is (24-hour window open, free), whether an approved template is needed and what it costs, or why that client cannot be messaged. Returns a signed quote valid for 15 minutes; to send, call miira.broadcast_sent with it. Show the quote to the person first.
 
-        miira.broadcast_quoted v1 — alcance miira.broadcast_quoted@1.
+        miira.broadcast_quoted v1 — scope miira.broadcast_quoted@1.
 
-        Necesita DOS permisos: una clave con ese alcance, y que el workspace haya encendido la accion.
+        Needs TWO permissions: a key with that scope, and the workspace having switched the action on.
         """
-        return self._ejercer("miira.broadcast_quoted", asdict(entrada), idempotency_key)
+        return self._exercise("miira.broadcast_quoted", asdict(input), idempotency_key)
 
     def sent_broadcast(
-        self, entrada: SentBroadcastInput, idempotency_key: Optional[str] = None
-    ) -> Resultado:
-        """Envía la difusión de WhatsApp presupuestada por miira.broadcast_quoted, exactamente a quienes y como dijo el presupuesto. Si algo cambió (ventana, consentimiento, tarifa) se niega con el presupuesto nuevo para confirmarlo otra vez. Cuesta dinero cuando hay plantillas: no lo llames sin que la persona haya visto el coste.
+        self, input: SentBroadcastInput, idempotency_key: Optional[str] = None
+    ) -> Result:
+        """Sends the WhatsApp broadcast quoted by miira.broadcast_quoted, exactly to whom and how the quote said. If anything changed (window, consent, rate) it refuses with a new quote to confirm again. Costs money when templates are involved: do not call it without the person having seen the cost.
 
-        miira.broadcast_sent v1 — alcance miira.broadcast_sent@1.
+        miira.broadcast_sent v1 — scope miira.broadcast_sent@1.
 
-        Necesita DOS permisos: una clave con ese alcance, y que el workspace haya encendido la accion.
+        Needs TWO permissions: a key with that scope, and the workspace having switched the action on.
         """
-        return self._ejercer("miira.broadcast_sent", asdict(entrada), idempotency_key)
+        return self._exercise("miira.broadcast_sent", asdict(input), idempotency_key)
 
     def voided_draft(
-        self, entrada: VoidedDraftInput, idempotency_key: Optional[str] = None
-    ) -> Resultado:
-        """Anula un BORRADOR de factura (uno creado con kiipu.invoice_proposed y todavía no emitido), por su id o por el nombre del cliente si es su único borrador. No anula facturas emitidas: eso es de una persona en Kiipu.
+        self, input: VoidedDraftInput, idempotency_key: Optional[str] = None
+    ) -> Result:
+        """Voids a DRAFT invoice (one created with kiipu.invoice_proposed and not yet issued), by its id or by the client's name when it is their only draft. Does not void issued invoices: that is for a person in Kiipu.
 
-        kiipu.draft_voided v1 — alcance kiipu.draft_voided@1.
+        kiipu.draft_voided v1 — scope kiipu.draft_voided@1.
 
-        Necesita DOS permisos: una clave con ese alcance, y que el workspace haya encendido la accion.
+        Needs TWO permissions: a key with that scope, and the workspace having switched the action on.
         """
-        return self._ejercer("kiipu.draft_voided", asdict(entrada), idempotency_key)
+        return self._exercise("kiipu.draft_voided", asdict(input), idempotency_key)
 
     def reported_payment(
-        self, entrada: ReportedPaymentInput, idempotency_key: Optional[str] = None
-    ) -> Resultado:
-        """Deja en la cola de aprobación de Kiipu el aviso de que un cliente (por su nombre) pagó cierto monto de una factura abierta. NO aplica el pago ni toca saldos: una persona lo revisa contra el banco y lo aplica. Si el cliente tiene varias facturas abiertas hay que decir el número.
+        self, input: ReportedPaymentInput, idempotency_key: Optional[str] = None
+    ) -> Result:
+        """Leaves in the Kiipu approval queue the notice that a client (by name) paid a given amount of an open invoice. Does NOT apply the payment and touches no balances: a person checks it against the bank and applies it. If the client has several open invoices the number must be given.
 
-        kiipu.payment_reported v1 — alcance kiipu.payment_reported@1.
+        kiipu.payment_reported v1 — scope kiipu.payment_reported@1.
 
-        Necesita DOS permisos: una clave con ese alcance, y que el workspace haya encendido la accion.
+        Needs TWO permissions: a key with that scope, and the workspace having switched the action on.
         """
-        return self._ejercer("kiipu.payment_reported", asdict(entrada), idempotency_key)
+        return self._exercise("kiipu.payment_reported", asdict(input), idempotency_key)

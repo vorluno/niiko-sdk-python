@@ -1,7 +1,7 @@
 [project]
 name = "niiko"
 version = "0.1.0"
-description = "Cliente generado de la API de acciones de niiko — expone verbos, no filas."
+description = "Generated client for the niiko actions API — it exposes verbs, not rows."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }
