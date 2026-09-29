@@ -1,4 +1,4 @@
-"""GENERATED from the niiko action manifest — plan 6c3240a7b22d. Do not edit by hand.
+"""GENERATED from the niiko action manifest — plan 88185e0c8c12. Do not edit by hand.
 
 Every method here exists because an action is DECLARED public. If the server answers "not_exposed", this copy
 of the SDK is newer than the deployment — not that you got the name wrong.
@@ -62,7 +62,7 @@ class CreateLeadOutput:
 
 
 # The reasons miira.lead_create declares. One outside this list is a server fault, not a state.
-CREATELEAD_REASONS = ("honeypot", "invalid_email", "disposable_email", "invalid_identity",)
+CREATELEAD_REASONS = ("honeypot", "invalid_email", "disposable_email", "invalid_identity", "leads_exceeded",)
 
 
 @dataclass
