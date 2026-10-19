@@ -1,4 +1,4 @@
-"""GENERATED from the niiko action manifest — plan 88185e0c8c12. Do not edit by hand.
+"""GENERATED from the niiko action manifest — plan dcf053ee9096. Do not edit by hand.
 
 Every method here exists because an action is DECLARED public. If the server answers "not_exposed", this copy
 of the SDK is newer than the deployment — not that you got the name wrong.
@@ -237,6 +237,7 @@ class QuotedBroadcastInput:
     message: str
     template: Optional[str] = None
     templateValues: Optional[list[str]] = None
+    purpose: Optional[str] = None
 
 
 @dataclass
@@ -309,23 +310,213 @@ class ReportedPaymentOutput:
 REPORTEDPAYMENT_REASONS = ("cliente_no_encontrado", "cliente_ambiguo", "demasiados_clientes", "sin_factura_abierta", "varias_facturas", "factura_no_encontrada", "sin_permiso",)
 
 
+@dataclass
+class SearchClientsInput:
+    search: Optional[str] = None
+    status: Optional[str] = None
+    tag: Optional[str] = None
+    createdSince: Optional[str] = None
+
+
+@dataclass
+class SearchClientsOutput:
+    total: int
+    totalIsMinimum: bool
+    byStatus: dict[str, Any]
+    clients: list[dict[str, Any]]
+
+
+# The reasons crm.clients_search declares. One outside this list is a server fault, not a state.
+SEARCHCLIENTS_REASONS = ("invalid_input", "role_forbidden", "grant_off", "reads_need_a_person",)
+
+
+@dataclass
+class GetCollectionsInput:
+    pass
+
+
+@dataclass
+class GetCollectionsOutput:
+    currency: str
+    outstandingTotal: str
+    openInvoices: int
+    overdueTotal: str
+    agingBuckets: list[dict[str, Any]]
+    debtors: list[dict[str, Any]]
+    upcoming: list[dict[str, Any]]
+    incomplete: bool
+
+
+# The reasons kiipu.collections_get declares. One outside this list is a server fault, not a state.
+GETCOLLECTIONS_REASONS = ("invalid_input", "role_forbidden", "grant_off", "reads_need_a_person",)
+
+
+@dataclass
+class GetCollectedMonthInput:
+    pass
+
+
+@dataclass
+class GetCollectedMonthOutput:
+    currency: str
+    collectedThisMonth: str
+    periodStart: str
+    periodEnd: str
+    collectedSamePeriodLastMonth: str
+    outstandingTotal: str
+    openInvoices: int
+    incomplete: bool
+
+
+# The reasons kiipu.collected_month_get declares. One outside this list is a server fault, not a state.
+GETCOLLECTEDMONTH_REASONS = ("invalid_input", "role_forbidden", "grant_off", "reads_need_a_person",)
+
+
+@dataclass
+class ListClientInvoicesInput:
+    client: str
+
+
+@dataclass
+class ListClientInvoicesOutput:
+    client: str
+    owedTotal: str
+    invoices: list[dict[str, Any]]
+    payments: list[dict[str, Any]]
+
+
+# The reasons kiipu.client_invoices_list declares. One outside this list is a server fault, not a state.
+LISTCLIENTINVOICES_REASONS = ("invalid_input", "role_forbidden", "grant_off", "reads_need_a_person", "ambiguous", "not_found",)
+
+
+@dataclass
+class GetConversationsWaitingInput:
+    pass
+
+
+@dataclass
+class GetConversationsWaitingOutput:
+    handledByAPerson: int
+    waitingForReply: int
+    thresholdMinutes: int
+    waitingOverThreshold: int
+    longestWaitMinutes: Optional[int]
+
+
+# The reasons miira.conversations_waiting_get declares. One outside this list is a server fault, not a state.
+GETCONVERSATIONSWAITING_REASONS = ("invalid_input", "role_forbidden", "grant_off", "reads_need_a_person",)
+
+
+@dataclass
+class GetAgendaInput:
+    period: Optional[str] = None
+
+
+@dataclass
+class GetAgendaOutput:
+    period: str
+    today: str
+    periodStart: str
+    periodEnd: str
+    timeZone: str
+    appointments: int
+    byStatus: dict[str, Any]
+    totalIsMinimum: bool
+    first: list[dict[str, Any]]
+
+
+# The reasons ciita.agenda_get declares. One outside this list is a server fault, not a state.
+GETAGENDA_REASONS = ("invalid_input", "role_forbidden", "grant_off", "reads_need_a_person",)
+
+
+@dataclass
+class GetFunnelInput:
+    pass
+
+
+@dataclass
+class GetFunnelOutput:
+    leadsInFunnel: int
+    totalIsMinimum: bool
+    byStage: list[dict[str, Any]]
+    qualified: int
+    enteredThisMonth: int
+    recent: list[dict[str, Any]]
+
+
+# The reasons miira.funnel_get declares. One outside this list is a server fault, not a state.
+GETFUNNEL_REASONS = ("invalid_input", "role_forbidden", "grant_off", "reads_need_a_person",)
+
+
+@dataclass
+class GetMonthResultInput:
+    pass
+
+
+@dataclass
+class GetMonthResultOutput:
+    currency: str
+    ledgerBalanced: bool
+    month: Optional[str]
+    noActivityThisMonth: bool
+    thisMonth: Optional[dict[str, Any]]
+    previousMonth: Optional[dict[str, Any]]
+
+
+# The reasons kiipu.month_result_get declares. One outside this list is a server fault, not a state.
+GETMONTHRESULT_REASONS = ("invalid_input", "role_forbidden", "grant_off", "reads_need_a_person",)
+
+
+@dataclass
+class GetMonthSummaryInput:
+    pass
+
+
+@dataclass
+class GetMonthSummaryOutput:
+    periodStart: str
+    periodEnd: str
+    newClients: Optional[dict[str, Any]]
+    collected: Optional[dict[str, Any]]
+    proposals: Optional[dict[str, Any]]
+    dealsWon: Optional[dict[str, Any]]
+    appointments: Optional[dict[str, Any]]
+    monthResult: Optional[dict[str, Any]]
+    unavailable: list[dict[str, Any]]
+
+
+# The reasons crm.month_summary_get declares. One outside this list is a server fault, not a state.
+GETMONTHSUMMARY_REASONS = ("invalid_input", "role_forbidden", "grant_off", "reads_need_a_person",)
+
+
 class Niiko:
-    def __init__(self, api_key: str, base_url: str = "https://niiko.org") -> None:
-        if not api_key:
-            raise ValueError("niiko: api_key is required")
-        self._api_key = api_key
+    def __init__(
+        self, api_key: Optional[str] = None, base_url: str = "https://niiko.org", *, access_token: Optional[str] = None
+    ) -> None:
+        """api_key is for ACTIONS. access_token (OAuth) is what READS need: a read is done on behalf of a person,
+        with their role, so an API key cannot read (it gets reads_need_a_person). With only one of the two, it is
+        used for everything and the server says which one each call needs."""
+        if not api_key and not access_token:
+            raise ValueError("niiko: api_key or access_token is required")
+        self._api_key = api_key or access_token
+        self._access_token = access_token or api_key
         self._base_url = base_url.rstrip("/")
 
     def _exercise(self, action: str, body: dict[str, Any], idempotency_key: Optional[str]) -> Result:
+        return self._send(f"/api/v1/actions/{action}", body, self._api_key, idempotency_key)
+
+    def _read(self, read: str, body: dict[str, Any]) -> Result:
+        # No idempotency key: a read has no effect to duplicate.
+        return self._send(f"/api/v1/reads/{read}", body, self._access_token, None)
+
+    def _send(self, path: str, body: dict[str, Any], credential: Optional[str], idempotency_key: Optional[str]) -> Result:
         data = json.dumps({k: v for k, v in body.items() if v is not None}).encode()
-        headers = {"authorization": f"Bearer {self._api_key}", "content-type": "application/json"}
+        headers = {"authorization": f"Bearer {credential}", "content-type": "application/json"}
         # Send it WHENEVER you can: a timeout retry with the same key does not execute again.
         if idempotency_key:
             headers["idempotency-key"] = idempotency_key
 
-        req = urllib.request.Request(
-            f"{self._base_url}/api/v1/actions/{action}", data=data, headers=headers, method="POST"
-        )
+        req = urllib.request.Request(f"{self._base_url}{path}", data=data, headers=headers, method="POST")
         try:
             with urllib.request.urlopen(req) as resp:
                 raw = json.loads(resp.read().decode())
@@ -454,7 +645,7 @@ class Niiko:
     def quoted_broadcast(
         self, input: QuotedBroadcastInput, idempotency_key: Optional[str] = None
     ) -> Result:
-        """Quotes sending the SAME WhatsApp message to several clients named by name (up to 50). Sends NOTHING: per client, it says whether the text goes as-is (24-hour window open, free), whether an approved template is needed and what it costs, or why that client cannot be messaged. Returns a signed quote valid for 15 minutes; to send, call miira.broadcast_sent with it. Show the quote to the person first.
+        """Quotes sending the SAME WhatsApp message to several clients named by name (up to 50). Sends NOTHING: per client, it says whether the text goes as-is (24-hour window open, free), whether an approved template is needed and what it costs, or why that client cannot be messaged. Returns a signed quote valid for 15 minutes; to send, call miira.broadcast_sent with it. Show the quote to the person first. Optional `purpose`: `notice` (default) is the usual notice; `promotion` NEVER sends free text, even with the window open, and requires an approved MARKETING template (otherwise plantilla_invalida): it only reaches clients with granted marketing consent (no_marketing_consent otherwise) and leaves US numbers out (us_moratorium). In a promotion `message` is never sent: what goes is the template with its `templateValues`. Use `promotion` for offers and campaigns, never for a reply or a notice.
 
         miira.broadcast_quoted v1 — scope miira.broadcast_quoted@1.
 
@@ -494,3 +685,93 @@ class Niiko:
         Needs TWO permissions: a key with that scope, and the workspace having switched the action on.
         """
         return self._exercise("kiipu.payment_reported", asdict(input), idempotency_key)
+
+    def search_clients(self, input: Optional[SearchClientsInput] = None) -> Result:
+        """Counts and finds the workspace's CRM clients, optionally by part of the name, status, tag or creation date. Returns the total, the total per status and up to 15 clients with status, owner and creation day. No contact details and no notes.
+
+        crm.clients_search v1 — scope crm.clients_search@1. Read-only.
+
+        Needs an OAuth access_token with that scope (an API key gets reads_need_a_person), and the workspace having
+        switched the read on. It answers with what the person behind the token can see.
+        """
+        return self._read("crm.clients_search", asdict(input) if input is not None else {})
+
+    def get_collections(self, input: Optional[GetCollectionsInput] = None) -> Result:
+        """Reads what is owed: the outstanding total, what is overdue by age bucket, the 15 clients who owe the most with their overdue amount and since when, and the next installments due. Changes nothing and contacts no one.
+
+        kiipu.collections_get v1 — scope kiipu.collections_get@1. Read-only.
+
+        Needs an OAuth access_token with that scope (an API key gets reads_need_a_person), and the workspace having
+        switched the read on. It answers with what the person behind the token can see.
+        """
+        return self._read("kiipu.collections_get", asdict(input) if input is not None else {})
+
+    def get_collected_month(self, input: Optional[GetCollectedMonthInput] = None) -> Result:
+        """Reads how much was collected this month so far (as the ledger recorded it), the same stretch of last month to compare, and what is still outstanding. Does not say who owes: that is kiipu.collections_get.
+
+        kiipu.collected_month_get v1 — scope kiipu.collected_month_get@1. Read-only.
+
+        Needs an OAuth access_token with that scope (an API key gets reads_need_a_person), and the workspace having
+        switched the read on. It answers with what the person behind the token can see.
+        """
+        return self._read("kiipu.collected_month_get", asdict(input) if input is not None else {})
+
+    def list_client_invoices(self, input: ListClientInvoicesInput) -> Result:
+        """Lists the latest invoices and payments of ONE client named by name: number, status, total, balance, and when and how they paid. With several matches it refuses with `ambiguous` and the candidates; with none, `not_found`.
+
+        kiipu.client_invoices_list v1 — scope kiipu.client_invoices_list@1. Read-only.
+
+        Needs an OAuth access_token with that scope (an API key gets reads_need_a_person), and the workspace having
+        switched the read on. It answers with what the person behind the token can see.
+        """
+        return self._read("kiipu.client_invoices_list", asdict(input) if input is not None else {})
+
+    def get_conversations_waiting(self, input: Optional[GetConversationsWaitingInput] = None) -> Result:
+        """Reads how many conversations a team member is handling, how many are waiting for a reply, how many have waited longer than the workspace threshold and the longest wait. Counts only: no names and no messages.
+
+        miira.conversations_waiting_get v1 — scope miira.conversations_waiting_get@1. Read-only.
+
+        Needs an OAuth access_token with that scope (an API key gets reads_need_a_person), and the workspace having
+        switched the read on. It answers with what the person behind the token can see.
+        """
+        return self._read("miira.conversations_waiting_get", asdict(input) if input is not None else {})
+
+    def get_agenda(self, input: Optional[GetAgendaInput] = None) -> Result:
+        """Reads the appointments of today, this week, next week or this month: how many per status and the first 15 with day, time in the workspace time zone, client, resource and status. Books nothing.
+
+        ciita.agenda_get v1 — scope ciita.agenda_get@1. Read-only.
+
+        Needs an OAuth access_token with that scope (an API key gets reads_need_a_person), and the workspace having
+        switched the read on. It answers with what the person behind the token can see.
+        """
+        return self._read("ciita.agenda_get", asdict(input) if input is not None else {})
+
+    def get_funnel(self, input: Optional[GetFunnelInput] = None) -> Result:
+        """Reads the Miira lead funnel by stage (the same rule as the board), how many leads are qualified, how many came in this month and the 15 most recent with their stage. Clients who already bought are in the CRM, not here.
+
+        miira.funnel_get v1 — scope miira.funnel_get@1. Read-only.
+
+        Needs an OAuth access_token with that scope (an API key gets reads_need_a_person), and the workspace having
+        switched the read on. It answers with what the person behind the token can see.
+        """
+        return self._read("miira.funnel_get", asdict(input) if input is not None else {})
+
+    def get_month_result(self, input: Optional[GetMonthResultInput] = None) -> Result:
+        """Reads this month's income statement from the ledger: revenue, expenses, net income, the accounts that weigh most and last month to compare. If the ledger does not balance right now it gives no figures; with no entries it says so, never zero.
+
+        kiipu.month_result_get v1 — scope kiipu.month_result_get@1. Read-only.
+
+        Needs an OAuth access_token with that scope (an API key gets reads_need_a_person), and the workspace having
+        switched the read on. It answers with what the person behind the token can see.
+        """
+        return self._read("kiipu.month_result_get", asdict(input) if input is not None else {})
+
+    def get_month_summary(self, input: Optional[GetMonthSummaryInput] = None) -> Result:
+        """Reads how the month is going, piece by piece and with the same figures each read would give: new clients, collected, proposals sent and accepted, deals won, appointments and the ledger result. A piece the person's role does not see, or whose read is off, comes back in `unavailable`.
+
+        crm.month_summary_get v1 — scope crm.month_summary_get@1. Read-only.
+
+        Needs an OAuth access_token with that scope (an API key gets reads_need_a_person), and the workspace having
+        switched the read on. It answers with what the person behind the token can see.
+        """
+        return self._read("crm.month_summary_get", asdict(input) if input is not None else {})
