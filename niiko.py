@@ -489,6 +489,93 @@ class GetMonthSummaryOutput:
 GETMONTHSUMMARY_REASONS = ("invalid_input", "role_forbidden", "grant_off", "reads_need_a_person",)
 
 
+@dataclass
+class SearchCatalogInput:
+    query: Optional[str] = None
+
+
+@dataclass
+class SearchCatalogOutput:
+    found: bool
+    offerings: list[dict[str, Any]]
+    detail: Optional[dict[str, Any]]
+
+
+# The reasons miira.catalog_search declares. One outside this list is a server fault, not a state.
+SEARCHCATALOG_REASONS = ("invalid_input", "role_forbidden", "grant_off", "reads_need_a_person",)
+
+
+@dataclass
+class SearchKnowledgeInput:
+    query: str
+
+
+@dataclass
+class SearchKnowledgeOutput:
+    found: bool
+    fragments: list[dict[str, Any]]
+
+
+# The reasons miira.knowledge_search declares. One outside this list is a server fault, not a state.
+SEARCHKNOWLEDGE_REASONS = ("invalid_input", "role_forbidden", "grant_off", "reads_need_a_person",)
+
+
+@dataclass
+class GetClientBalanceInput:
+    client: str
+
+
+@dataclass
+class GetClientBalanceOutput:
+    client: str
+    standing: str
+    outstandingTotal: Optional[str]
+    currency: Optional[str]
+    nextInstallment: Optional[dict[str, Any]]
+
+
+# The reasons kiipu.client_balance_get declares. One outside this list is a server fault, not a state.
+GETCLIENTBALANCE_REASONS = ("invalid_input", "role_forbidden", "grant_off", "reads_need_a_person", "ambiguous", "not_found",)
+
+
+@dataclass
+class GetClientOverviewInput:
+    client: str
+
+
+@dataclass
+class GetClientOverviewOutput:
+    client: str
+    owedTotal: str
+    openInvoices: list[dict[str, Any]]
+    conversations: list[dict[str, Any]]
+    noActivity: bool
+
+
+# The reasons crm.client_overview_get declares. One outside this list is a server fault, not a state.
+GETCLIENTOVERVIEW_REASONS = ("invalid_input", "role_forbidden", "grant_off", "reads_need_a_person", "ambiguous", "not_found",)
+
+
+@dataclass
+class GetAgentConfigInput:
+    pass
+
+
+@dataclass
+class GetAgentConfigOutput:
+    configured: bool
+    persona: Optional[dict[str, Any]]
+    script: list[dict[str, Any]]
+    stages: list[dict[str, Any]]
+    responses: list[dict[str, Any]]
+    documents: list[dict[str, Any]]
+    milestones: list[dict[str, Any]]
+
+
+# The reasons miira.agent_config_get declares. One outside this list is a server fault, not a state.
+GETAGENTCONFIG_REASONS = ("invalid_input", "role_forbidden", "grant_off", "reads_need_a_person",)
+
+
 class Niiko:
     def __init__(
         self, api_key: Optional[str] = None, base_url: str = "https://niiko.org", *, access_token: Optional[str] = None
@@ -775,3 +862,53 @@ class Niiko:
         switched the read on. It answers with what the person behind the token can see.
         """
         return self._read("crm.month_summary_get", asdict(input) if input is not None else {})
+
+    def search_catalog(self, input: Optional[SearchCatalogInput] = None) -> Result:
+        """Searches the published catalog by words and returns up to 5 active public offerings with name, summary, price, currency and what the price is per; with exactly one match, also its whole description and attributes. Internal, paused and discontinued offerings never come back.
+
+        miira.catalog_search v1 — scope miira.catalog_search@1. Read-only.
+
+        Needs an OAuth access_token with that scope (an API key gets reads_need_a_person), and the workspace having
+        switched the read on. It answers with what the person behind the token can see.
+        """
+        return self._read("miira.catalog_search", asdict(input) if input is not None else {})
+
+    def search_knowledge(self, input: SearchKnowledgeInput) -> Result:
+        """Searches the knowledge base the team loaded for the sales agent (manuals, cases, answers to objections) by words, and returns up to 6 fragments with their document and section. Only active documents that finished indexing. It is not the source of a price: that is miira.catalog_search.
+
+        miira.knowledge_search v1 — scope miira.knowledge_search@1. Read-only.
+
+        Needs an OAuth access_token with that scope (an API key gets reads_need_a_person), and the workspace having
+        switched the read on. It answers with what the person behind the token can see.
+        """
+        return self._read("miira.knowledge_search", asdict(input) if input is not None else {})
+
+    def get_client_balance(self, input: GetClientBalanceInput) -> Result:
+        """Reads how much ONE client named by name owes in total, as the ledger has it, and their next installment due. A client never invoiced comes back as `never_invoiced`, never as up to date; a lead or a churned client, as `not_a_client`. With several matches it refuses with `ambiguous`; with none, `not_found`.
+
+        kiipu.client_balance_get v1 — scope kiipu.client_balance_get@1. Read-only.
+
+        Needs an OAuth access_token with that scope (an API key gets reads_need_a_person), and the workspace having
+        switched the read on. It answers with what the person behind the token can see.
+        """
+        return self._read("kiipu.client_balance_get", asdict(input) if input is not None else {})
+
+    def get_client_overview(self, input: GetClientOverviewInput) -> Result:
+        """Reads where ONE client named by name stands: their open invoices with balance and since when they are owed, the total owed, and which channels you have talked on with the day of their last message. Never what was said, and no phone or email.
+
+        crm.client_overview_get v1 — scope crm.client_overview_get@1. Read-only.
+
+        Needs an OAuth access_token with that scope (an API key gets reads_need_a_person), and the workspace having
+        switched the read on. It answers with what the person behind the token can see.
+        """
+        return self._read("crm.client_overview_get", asdict(input) if input is not None else {})
+
+    def get_agent_config(self, input: Optional[GetAgentConfigInput] = None) -> Result:
+        """Reads how the sales agent is configured today: its persona, the script in order with what each question saves and scores, the funnel stages, the reference responses, the documents asked per client type and the milestones. With `configured: false` the workspace still has the demo setup. Changes nothing.
+
+        miira.agent_config_get v1 — scope miira.agent_config_get@1. Read-only.
+
+        Needs an OAuth access_token with that scope (an API key gets reads_need_a_person), and the workspace having
+        switched the read on. It answers with what the person behind the token can see.
+        """
+        return self._read("miira.agent_config_get", asdict(input) if input is not None else {})
